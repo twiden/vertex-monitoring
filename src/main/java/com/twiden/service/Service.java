@@ -1,10 +1,10 @@
 package com.twiden.service;
 
-import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.AbstractVerticle;
 
 public class Service extends AbstractVerticle {
 
