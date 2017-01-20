@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.File;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -101,5 +102,9 @@ public class Storage {
             oFile.write(Storage.emptyDb);
             oFile.close();
         }
+    }
+
+    public void clearDatabase() throws IOException {
+        new File(Storage.db).delete();
     }
 }
