@@ -2,6 +2,7 @@ package com.twiden.backend;
 
 import com.twiden.backend.Storage;
 import com.twiden.backend.Service;
+import com.twiden.backend.ServiceNotFound;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,18 +68,15 @@ public class Backend extends AbstractVerticle {
 
     private void handleSetStatus(RoutingContext routingContext) {
         HttpServerResponse response = routingContext.response();
+        String id = routingContext.request().getParam("serviceId");
         try {
-            String id = routingContext.request().getParam("serviceId");
             JsonObject patch = routingContext.getBodyAsJson();
             String status = patch.getString("status");
             String timestamp = patch.getString("timestamp");
-            boolean success = new Storage().setStatus(id, status, timestamp);
-
-            if (success) {
-                response.setStatusCode(200).end("OK");
-            } else {
-                response.setStatusCode(404).end("NOT FOUND " + id);
-            }
+            new Storage().setStatus(id, status, timestamp);
+            response.setStatusCode(200).end("UPDATED " + id);
+        } catch (ServiceNotFound e) {
+            response.setStatusCode(404).end("NOT FOUND " + id);
         } catch (Throwable e) {
             e.printStackTrace();
             response.setStatusCode(500).end("500 " + e.toString());
@@ -87,15 +85,12 @@ public class Backend extends AbstractVerticle {
 
     private void handleDeleteService(RoutingContext routingContext) {
         HttpServerResponse response = routingContext.response();
+        String id = routingContext.request().getParam("serviceId");
         try {
-            String id = routingContext.request().getParam("serviceId");
-            boolean success = new Storage().deleteService(id);
-
-            if (success) {
-                response.setStatusCode(200).end("DELETED " + id);
-            } else {
-                response.setStatusCode(404).end("NOT FOUND " + id);
-            }
+            new Storage().deleteService(id);
+            response.setStatusCode(200).end("DELETED " + id);
+        } catch (ServiceNotFound e) {
+            response.setStatusCode(404).end("NOT FOUND " + id);
         } catch (Throwable e) {
             e.printStackTrace();
             response.setStatusCode(500).end("500 " + e.toString());

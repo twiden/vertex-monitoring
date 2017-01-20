@@ -1,6 +1,7 @@
 package com.twiden.backend;
 
 import com.twiden.backend.Service;
+import com.twiden.backend.ServiceNotFound;
 
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -15,8 +16,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-
-// Racy storage. Simultaneous requests might break this.
+// Racy storage. Concurrent requests might break this.
 // Throws all sorts of exceptions because if storage breaks there is no point trying to keep the application alive, hard failures are better here.
 public class Storage {
 
@@ -50,19 +50,19 @@ public class Storage {
         return id;
     }
 
-    public boolean deleteService(String id) throws IOException, ParseException {
+    public void deleteService(String id) throws IOException, ParseException, ServiceNotFound {
         ArrayList<Service> services = listServices();
         for (int i = 0; i < services.size(); i++) {
             if (services.get(i).getId().equals(id)) {
                 services.remove(i);
                 writeServices(services);
-                return true;
+                return;
             }
         }
-        return false;
+        throw new ServiceNotFound(id);
     }
 
-    public boolean setStatus(String id, String status, String timestamp) throws IOException, ParseException {
+    public void setStatus(String id, String status, String timestamp) throws IOException, ParseException, ServiceNotFound {
         ArrayList<Service> services = listServices();
         for (int i = 0; i < services.size(); i++) {
             Service s = services.get(i);
@@ -70,10 +70,10 @@ public class Storage {
                 s.setStatus(status);
                 s.setLastCheck(timestamp);
                 writeServices(services);
-                return true;
+                return;
             }
         }
-        return false;
+        throw new ServiceNotFound(id);
     }
 
     private void writeServices(ArrayList<Service> services) throws IOException {
