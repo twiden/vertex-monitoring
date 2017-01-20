@@ -16,6 +16,12 @@ Listing services
 curl -XGET http://localhost:8000/service
 ```
 
+Registering a new service.
+
+```
+curl -XPOST http://localhost:8000/service -d '{"name": "Pizza Service", "url": "http://localhost:5000/"}'
+```
+
 # Service
 This is a http server process that should be monitored by the backend application. It takes a listen port as an environment variable so that many services can be run at once.
 

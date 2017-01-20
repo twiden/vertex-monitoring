@@ -42,13 +42,22 @@ public class Backend extends AbstractVerticle {
                 .end(Json.encodePrettily(services));
         } catch (Throwable e) {
             e.printStackTrace();
-            response.setStatusCode(500).end("500: " + e.toString());
+            response.setStatusCode(500).end("500 " + e.toString());
         }
     }
 
     private void handleCreateService(RoutingContext routingContext) {
         HttpServerResponse response = routingContext.response();
-        response.end("Create service handler");
+        try {
+            JsonObject service = routingContext.getBodyAsJson();
+            String name = service.getString("name");
+            String url = service.getString("url");
+            String id = new Storage().createSevice(name, url);
+            response.setStatusCode(201).end("CREATED " + id);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            response.setStatusCode(500).end("500 " + e.toString());
+        }
     }
 
     private void handleDeleteService(RoutingContext routingContext) {

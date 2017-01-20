@@ -1,5 +1,7 @@
 package com.twiden.backend;
 
+import org.json.simple.JSONObject;
+
 public class Service {
 
     private final String id;
@@ -14,6 +16,19 @@ public class Service {
         this.status = status;
         this.url = url;
         this.lastCheck = lastCheck;
+    }
+
+    public Service(JSONObject json) {
+        this(
+            (String) json.get("id"),
+            (String) json.get("name"),
+            (String) json.get("status"),
+            (String) json.get("url"),
+            (String) json.get("lastCheck")
+        );
+    }
+    public Service(String name, String url) {
+        this("random id", name, "", url, "");
     }
 
     public String getId() {
@@ -32,7 +47,17 @@ public class Service {
         return url;
     }
 
-    public String getLastChecked() {
+    public String getLastCheck() {
         return lastCheck;
+    }
+
+    public JSONObject toJSONObject(){
+        JSONObject obj = new JSONObject();
+        obj.put("name", this.getName());
+        obj.put("id", this.getId());
+        obj.put("status", this.getStatus());
+        obj.put("lastCheck", this.getLastCheck());
+        obj.put("url", this.getUrl());
+        return obj;
     }
 }

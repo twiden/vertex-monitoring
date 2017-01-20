@@ -1,11 +1,13 @@
 package com.twiden.backend;
 
-import java.io.FileReader;
+import com.twiden.backend.Service;
+
 import java.util.Iterator;
 import java.util.ArrayList;
-import com.twiden.backend.Service;
-import java.io.IOException;
+import java.util.UUID;
 
+import java.io.IOException;
+import java.io.FileReader;
 import java.io.FileWriter;
 
 import org.json.simple.JSONArray;
@@ -15,6 +17,7 @@ import org.json.simple.parser.ParseException;
 
 
 // Racy storage. Simultaneous requests might break this.
+// Throws all sorts of exceptions because if storage breaks there is no point trying to keep the application alive, hard failures are better here.
 public class Storage {
 
     static String db = "database.json";
@@ -24,7 +27,7 @@ public class Storage {
         this.ensureDatabaseIsInitialized();
     }
 
-    public ArrayList<Service> listServices() throws IOException, ParseException{
+    public ArrayList<Service> listServices() throws IOException, ParseException {
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(new FileReader(Storage.db));
         JSONObject jsonObject =  (JSONObject) obj;
@@ -33,19 +36,32 @@ public class Storage {
         Iterator<JSONObject> iterator = db_services.iterator();
 
         while (iterator.hasNext()) {
-            JSONObject service = iterator.next();
-            service_instances.add(new Service(
-                (String) service.get("id"),
-                (String) service.get("name"),
-                (String) service.get("status"),
-                (String) service.get("url"),
-                (String) service.get("lastCheck")
-            ));
+            service_instances.add(new Service(iterator.next()));
         }
 
         return service_instances;
     }
 
+    public String createSevice(String name, String url) throws IOException, ParseException {
+        String id = UUID.randomUUID().toString();
+        ArrayList<Service> services = listServices();
+        services.add(new Service(id, name, "", url, ""));
+        writeServices(services);
+        return id;
+    }
+
+    private void writeServices(ArrayList<Service> services) throws IOException {
+        JSONArray service_list = new JSONArray();
+        for (Service service : services) {
+            service_list.add(service.toJSONObject());
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("services", service_list);
+
+        FileWriter file = new FileWriter(Storage.db);
+        file.write(obj.toJSONString());
+        file.flush();
+    }
 
     private void ensureDatabaseIsInitialized() throws IOException {
         boolean db_exists = true;
@@ -56,7 +72,7 @@ public class Storage {
         }
         if (!db_exists) {
             FileWriter oFile = new FileWriter(Storage.db, false);
-            oFile.write("{\"services\": []}");
+            oFile.write(Storage.emptyDb);
             oFile.close();
         }
     }
