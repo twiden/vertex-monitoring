@@ -4,6 +4,7 @@ import com.twiden.backend.Storage;
 import com.twiden.backend.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -37,9 +38,11 @@ public class Backend extends AbstractVerticle {
         HttpServerResponse response = routingContext.response();
         try {
             ArrayList<Service> services = new Storage().listServices();
+            HashMap<String, ArrayList<Service>> obj = new HashMap<>();
+            obj.put("services", services);
             response
                 .putHeader("content-type", "application/json; charset=utf-8")
-                .end(Json.encodePrettily(services));
+                .end(Json.encodePrettily(obj));
         } catch (Throwable e) {
             e.printStackTrace();
             response.setStatusCode(500).end("500 " + e.toString());
