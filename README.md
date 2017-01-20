@@ -2,7 +2,7 @@
 Foo
 
 
-# Backend
+# REST Backend
 
 Running the backend
 
@@ -36,8 +36,8 @@ curl -XPATCH http://localhost:8000/service/07a9953d-6604-4968-8bd1-df33a075980a 
 
 ```
 
-# Service
-This is a http server process that should be monitored by the backend application. It takes a listen port as an environment variable so that many services can be run at once.
+# Monitored services
+Http server process that should be monitored by the backend application. It takes a listen port as an environment variable so that many services can be run at once.
 
 Running a service
 
