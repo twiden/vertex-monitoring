@@ -7,7 +7,13 @@ Foo
 Running the backend
 
 ```
-mvn package exec:exec@run-backend
+LISTEN_PORT=8000 mvn package exec:exec@run-backend
+```
+
+Listing services
+
+```
+curl -XGET http://localhost:8000/service
 ```
 
 # Service
