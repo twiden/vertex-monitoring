@@ -52,7 +52,7 @@ public class Backend extends AbstractVerticle {
             JsonObject service = routingContext.getBodyAsJson();
             String name = service.getString("name");
             String url = service.getString("url");
-            String id = new Storage().createSevice(name, url);
+            String id = new Storage().createService(name, url);
             response.setStatusCode(201).end("CREATED " + id);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -61,8 +61,20 @@ public class Backend extends AbstractVerticle {
     }
 
     private void handleDeleteService(RoutingContext routingContext) {
-        String serviceId = routingContext.request().getParam("serviceId");
         HttpServerResponse response = routingContext.response();
-        response.end("Delete services handler");
+        try {
+            String id = routingContext.request().getParam("serviceId");
+            boolean success = new Storage().deleteService(id);
+
+            if (success) {
+                response.setStatusCode(200).end("DELETED " + id);
+            } else {
+                response.setStatusCode(404).end("NOT FOUND " + id);
+            }
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+            response.setStatusCode(500).end("500 " + e.toString());
+        }
     }
 }

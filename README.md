@@ -22,6 +22,12 @@ Registering a new service.
 curl -XPOST http://localhost:8000/service -d '{"name": "Pizza Service", "url": "http://localhost:5000/"}'
 ```
 
+Deleting a service (with id 07a9953d-6604-4968-8bd1-df33a075980a)
+
+```
+curl -XDELETE "http://localhost:8000/service/07a9953d-6604-4968-8bd1-df33a075980a"
+```
+
 # Service
 This is a http server process that should be monitored by the backend application. It takes a listen port as an environment variable so that many services can be run at once.
 

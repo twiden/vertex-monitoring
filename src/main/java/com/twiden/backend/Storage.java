@@ -42,12 +42,24 @@ public class Storage {
         return service_instances;
     }
 
-    public String createSevice(String name, String url) throws IOException, ParseException {
+    public String createService(String name, String url) throws IOException, ParseException {
         String id = UUID.randomUUID().toString();
         ArrayList<Service> services = listServices();
         services.add(new Service(id, name, "", url, ""));
         writeServices(services);
         return id;
+    }
+
+    public boolean deleteService(String id) throws IOException, ParseException {
+        ArrayList<Service> services = listServices();
+        for (int i = 0; i < services.size(); i++) {
+            if (services.get(i).getId().equals(id)) {
+                services.remove(i);
+                writeServices(services);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void writeServices(ArrayList<Service> services) throws IOException {
