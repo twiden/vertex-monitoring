@@ -13,6 +13,7 @@
     <!-- the main verticle class name -->
     <backend.verticle>com.twiden.backend.Backend</backend.verticle>
     <service.verticle>com.twiden.service.Service</service.verticle>
+    <vertx.version>3.3.3</vertx.version>
   </properties>
 
   <dependencies>
@@ -20,7 +21,12 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-core</artifactId>
-      <version>3.3.3</version>
+      <version>${vertx.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web</artifactId>
+      <version>${vertx.version}</version>
     </dependency>
 
     <!-- Add hazelcast deps if you want it clusterable -->

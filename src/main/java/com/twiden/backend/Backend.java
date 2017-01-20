@@ -1,7 +1,10 @@
 package com.twiden.backend;
+
 import io.vertx.core.AbstractVerticle;
 
 public class Backend extends AbstractVerticle {
+
+    private static boolean up = true;
 
     @Override
     public void start() {
