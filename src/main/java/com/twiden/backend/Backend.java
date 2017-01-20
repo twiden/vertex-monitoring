@@ -14,6 +14,7 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
+// TODO: Validate incoming data
 public class Backend extends AbstractVerticle {
 
     @Override
@@ -24,6 +25,7 @@ public class Backend extends AbstractVerticle {
         router.get("/service").handler(this::handleGetServices);
         router.post("/service/").handler(this::handleCreateService);
         router.delete("/service/:serviceId").handler(this::handleDeleteService);
+        router.patch("/service/:serviceId").handler(this::handleSetStatus);
 
         int listen_port = 8000;
         if (System.getenv("LISTEN_PORT") != null) {
@@ -63,6 +65,26 @@ public class Backend extends AbstractVerticle {
         }
     }
 
+    private void handleSetStatus(RoutingContext routingContext) {
+        HttpServerResponse response = routingContext.response();
+        try {
+            String id = routingContext.request().getParam("serviceId");
+            JsonObject patch = routingContext.getBodyAsJson();
+            String status = patch.getString("status");
+            String timestamp = patch.getString("timestamp");
+            boolean success = new Storage().setStatus(id, status, timestamp);
+
+            if (success) {
+                response.setStatusCode(200).end("OK");
+            } else {
+                response.setStatusCode(404).end("NOT FOUND " + id);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+            response.setStatusCode(500).end("500 " + e.toString());
+        }
+    }
+
     private void handleDeleteService(RoutingContext routingContext) {
         HttpServerResponse response = routingContext.response();
         try {
@@ -74,7 +96,6 @@ public class Backend extends AbstractVerticle {
             } else {
                 response.setStatusCode(404).end("NOT FOUND " + id);
             }
-
         } catch (Throwable e) {
             e.printStackTrace();
             response.setStatusCode(500).end("500 " + e.toString());

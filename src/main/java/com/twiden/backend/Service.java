@@ -5,10 +5,10 @@ import org.json.simple.JSONObject;
 public class Service {
 
     private final String id;
-    private final String name;
-    private final String status;
-    private final String url;
-    private final String lastCheck;
+    private String name;
+    private String status;
+    private String url;
+    private String lastCheck;
 
     public Service(String id, String name, String status, String url, String lastCheck) {
         this.id = id;
@@ -27,9 +27,6 @@ public class Service {
             (String) json.get("lastCheck")
         );
     }
-    public Service(String name, String url) {
-        this("random id", name, "", url, "");
-    }
 
     public String getId() {
         return id;
@@ -43,12 +40,20 @@ public class Service {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getUrl() {
         return url;
     }
 
     public String getLastCheck() {
         return lastCheck;
+    }
+
+    public void setLastCheck(String lastCheck) {
+        this.lastCheck = lastCheck;
     }
 
     public JSONObject toJSONObject(){
