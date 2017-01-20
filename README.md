@@ -33,7 +33,6 @@ Marking a service as up or down. This endpoint is used by the background process
 ```
 curl -XPATCH http://localhost:8000/service/07a9953d-6604-4968-8bd1-df33a075980a -d '{"status": "OK", "timestamp": "1914-06-24 16:42"}'
 curl -XPATCH http://localhost:8000/service/07a9953d-6604-4968-8bd1-df33a075980a -d '{"status": "FAIL", "timestamp": "1914-06-24 16:42"}'
-
 ```
 
 # Monitored services
