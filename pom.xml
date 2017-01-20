@@ -11,7 +11,8 @@
 
   <properties>
     <!-- the main verticle class name -->
-    <main.verticle>com.twiden.backend.Backend</main.verticle>
+    <backend.verticle>com.twiden.backend.Backend</backend.verticle>
+    <service.verticle>com.twiden.service.Service</service.verticle>
   </properties>
 
   <dependencies>
@@ -58,6 +59,7 @@
         <version>2.3</version>
         <executions>
           <execution>
+            <id>Backend</id>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
@@ -67,7 +69,7 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
                     <Main-Class>io.vertx.core.Launcher</Main-Class>
-                    <Main-Verticle>${main.verticle}</Main-Verticle>
+                    <Main-Verticle>${backend.verticle}</Main-Verticle>
                   </manifestEntries>
                 </transformer>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
@@ -76,7 +78,30 @@
               </transformers>
               <artifactSet>
               </artifactSet>
-              <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-fat.jar</outputFile>
+              <outputFile>${project.build.directory}/${project.artifactId}-backend-${project.version}-fat.jar</outputFile>
+            </configuration>
+          </execution>
+          <execution>
+            <id>Service</id>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Main-Class>io.vertx.core.Launcher</Main-Class>
+                    <Main-Verticle>${service.verticle}</Main-Verticle>
+                  </manifestEntries>
+                </transformer>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                  <resource>META-INF/services/io.vertx.core.spi.VerticleFactory</resource>
+                </transformer>
+              </transformers>
+              <artifactSet>
+              </artifactSet>
+              <outputFile>${project.build.directory}/${project.artifactId}-service-${project.version}-fat.jar</outputFile>
             </configuration>
           </execution>
         </executions>
@@ -96,13 +121,13 @@
               <mainClass>io.vertx.core.Launcher</mainClass>
               <arguments>
                 <argument>run</argument>
-                <argument>${main.verticle}</argument>
+                <argument>${backend.verticle}</argument>
               </arguments>
             </configuration>
           </execution>
 
           <execution>
-            <id>run-app</id>
+            <id>run-backend</id>
             <goals>
               <goal>exec</goal>
             </goals>
@@ -110,7 +135,20 @@
               <executable>java</executable>
               <arguments>
                 <argument>-jar</argument>
-                <argument>target/${project.artifactId}-${project.version}-fat.jar</argument>
+                <argument>target/${project.artifactId}-backend-${project.version}-fat.jar</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>run-service</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <arguments>
+                <argument>-jar</argument>
+                <argument>target/${project.artifactId}-service-${project.version}-fat.jar</argument>
               </arguments>
             </configuration>
           </execution>
