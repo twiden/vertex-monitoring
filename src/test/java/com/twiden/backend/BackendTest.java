@@ -5,6 +5,7 @@ import com.twiden.backend.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import io.vertx.core.Vertx;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -114,6 +115,26 @@ public class BackendTest {
                 async.complete();
 
             }).end();
+    }
+
+    @Test
+    public void testSettingServiceStatus(TestContext context) {
+        final String json = "{\"status\": \"OK\", \"timestamp\": \"1914-06-28 13:37\"}";
+        createService("Pizza Service", "http://example.com/pizza");
+        String service_id = listServices().get(0).getId();
+        final Async async = context.async();
+        vertx.createHttpClient().request(HttpMethod.PATCH, port, "localhost", "/service/" + service_id)
+            .putHeader("content-type", "application/json")
+            .putHeader("content-length", Integer.toString(json.length()))
+            .handler(response -> {
+                context.assertEquals(response.statusCode(), 200);
+                Service service = listServices().get(0);
+                context.assertEquals((String) service.getStatus(), "OK");
+                context.assertEquals((String) service.getLastCheck(), "1914-06-28 13:37");
+                async.complete();
+            })
+            .write(json)
+            .end();
     }
 
     private void createService(String name, String url) {
