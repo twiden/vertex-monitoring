@@ -33,7 +33,7 @@ public class BackendTest {
         try {
             new Storage().clearDatabase();
         } catch (IOException e) {
-            fail("Cold access database");
+            fail("Could not access database");
         }
         vertx.deployVerticle(Backend.class.getName(), context.asyncAssertSuccess());
     }

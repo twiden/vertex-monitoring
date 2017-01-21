@@ -7,6 +7,8 @@ import com.twiden.backend.ServiceNotFound;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.io.IOException;
+
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -31,6 +33,13 @@ public class Backend extends AbstractVerticle {
         int listen_port = 8000;
         if (System.getenv("LISTEN_PORT") != null) {
             listen_port = Integer.parseInt(System.getenv("LISTEN_PORT"));
+        }
+
+        try {
+            new Storage().clearDatabase();
+        } catch (IOException e) {
+            System.out.println("Could not access database");
+            return;
         }
 
         System.out.println("Listening at http://localhost:" + listen_port);
