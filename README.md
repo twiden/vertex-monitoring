@@ -1,4 +1,4 @@
-# Monitoring with Vertex.io
+# Monitoring with Vertx.io
 
 ### Building the project
 
