@@ -1,3 +1,3 @@
 # Monitoring with Vertx.io
 
-Backend
+This is an Android Studio project. It is easiest to open and run it from Android Studio.
