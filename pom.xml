@@ -33,11 +33,11 @@
       <artifactId>vertx-web</artifactId>
       <version>${vertx.version}</version>
     </dependency>
-    <!-- <dependency>
+    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.5.2</version>
-    </dependency> -->
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -109,7 +109,7 @@
               <outputFile>${project.build.directory}/${project.artifactId}-backend-${project.version}-fat.jar</outputFile>
             </configuration>
           </execution>
-          <!-- <execution>
+          <execution>
             <id>Service</id>
             <phase>package</phase>
             <goals>
@@ -150,7 +150,7 @@
               </artifactSet>
               <outputFile>${project.build.directory}/${project.artifactId}-supervisor-${project.version}-fat.jar</outputFile>
             </configuration>
-          </execution> -->
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -171,7 +171,7 @@
               </arguments>
             </configuration>
           </execution>
-          <!-- <execution>
+          <execution>
             <id>run-service</id>
             <goals>
               <goal>exec</goal>
@@ -196,7 +196,7 @@
                 <argument>target/${project.artifactId}-supervisor-${project.version}-fat.jar</argument>
               </arguments>
             </configuration>
-          </execution> -->
+          </execution>
         </executions>
       </plugin>
     </plugins>
