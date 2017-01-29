@@ -2,6 +2,8 @@
 
 ### Building the project
 
+Requires Java 1.8
+
 ```
 mvn package
 ```

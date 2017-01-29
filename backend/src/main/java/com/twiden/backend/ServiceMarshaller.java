@@ -1,27 +1,27 @@
 package com.twiden.backend;
 
-import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Iterator;
 import java.util.ArrayList;
 
 public class ServiceMarshaller {
 
-    public static ArrayList<Service> servicesToJSON(ArrayList<Service> services){
+    public static JSONArray servicesToJSON(ArrayList<Service> services){
         JSONArray service_list = new JSONArray();
         for (Service service : services) {
-            service_list.add(serviceToJSON(service));
+            service_list.put(serviceToJSON(service));
         }
         return service_list;
     }
 
     public static ArrayList<Service> servicesFromJSON(JSONArray json) {
         ArrayList<Service> service_instances = new ArrayList<>();
-        Iterator<JSONObject> iterator = json.iterator();
 
-        while (iterator.hasNext()) {
-            service_instances.add(serviceFromJSON(iterator.next()));
+        for (int i = 0; i < json.length(); i++) {
+            service_instances.add(serviceFromJSON(json.getJSONObject(i)));
         }
 
         return service_instances;
@@ -29,11 +29,11 @@ public class ServiceMarshaller {
 
     private static Service serviceFromJSON(JSONObject json) {
         return new Service(
-            (String) json.get("id"),
-            (String) json.get("name"),
-            (String) json.get("status"),
-            (String) json.get("url"),
-            (String) json.get("lastCheck")
+            json.getString("id"),
+            json.getString("name"),
+            json.getString("status"),
+            json.getString("url"),
+            json.getString("lastCheck")
         );
     }
 
