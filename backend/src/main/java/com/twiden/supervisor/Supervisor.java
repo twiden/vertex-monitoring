@@ -42,7 +42,6 @@ public class Supervisor {
 
         boolean first_iteration = true;
         while (true) {
-
             if (!first_iteration) {
                 try {
                     Thread.sleep(sleep_seconds * 1000);
@@ -51,7 +50,6 @@ public class Supervisor {
                 }
             }
             first_iteration = false;
-
             healthCheck(backend_url);
         }
     }

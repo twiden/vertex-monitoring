@@ -29,7 +29,6 @@ public class Storage {
 
     public ArrayList<Service> listServices() throws StorageIOException {
         JSONArray db_services;
-
         try {
             String contents = new String(Files.readAllBytes(Paths.get(Storage.db)));
             JSONObject jsonObject =  (JSONObject) new JSONTokener(contents).nextValue();
@@ -37,7 +36,6 @@ public class Storage {
         } catch (IOException e) {
             throw new StorageIOException("Database file does not exist or could not be created");
         }
-
         return service_marshaller.servicesFromJSON(db_services);
     }
 

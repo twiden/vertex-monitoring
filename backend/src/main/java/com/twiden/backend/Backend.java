@@ -46,9 +46,8 @@ public class Backend extends AbstractVerticle {
     private void handleGetServices(RoutingContext routingContext) {
         HttpServerResponse response = routingContext.response();
         try {
-            ArrayList<Service> services = storage.listServices();
             HashMap<String, ArrayList<Service>> obj = new HashMap<>();
-            obj.put("services", services);
+            obj.put("services", storage.listServices());
             response
                 .putHeader("content-type", "application/json; charset=utf-8")
                 .end(Json.encodePrettily(obj));
