@@ -37,7 +37,7 @@ LISTEN_PORT=5000 mvn exec:exec@run-service
 Register the service in the backend
 
 ```
-curl -XPOST http://localhost:8000/service -d '{"name": "Pizza Service", "url": "http://localhost:5000/"}
+curl -XPOST http://localhost:8000/service -d '{"name": "Pizza Service", "url": "http://localhost:5000/"}'
 
 CREATED eee7856e-fcd6-4199-bf53-9d4abfa90e75
 ```
