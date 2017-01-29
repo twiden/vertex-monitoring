@@ -43,7 +43,7 @@ CREATED eee7856e-fcd6-4199-bf53-9d4abfa90e75
 Wait 5 seconds and check that it is monitored
 
 ```
-curl -XGET http://localhost:8000/
+curl -XGET http://localhost:8000/service
 
 {
   "services" : [ {

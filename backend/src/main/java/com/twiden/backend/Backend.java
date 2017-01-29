@@ -17,8 +17,9 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
-// TODO: Validate incoming data
 public class Backend extends AbstractVerticle {
+
+    private Storage storage;
 
     @Override
     public void start() {
@@ -36,7 +37,7 @@ public class Backend extends AbstractVerticle {
         }
 
         try {
-            new Storage().clearDatabase();
+            storage = new Storage();
         } catch (IOException e) {
             System.out.println("Could not access database");
             return;
@@ -49,7 +50,7 @@ public class Backend extends AbstractVerticle {
     private void handleGetServices(RoutingContext routingContext) {
         HttpServerResponse response = routingContext.response();
         try {
-            ArrayList<Service> services = new Storage().listServices();
+            ArrayList<Service> services = storage.listServices();
             HashMap<String, ArrayList<Service>> obj = new HashMap<>();
             obj.put("services", services);
             response
@@ -67,7 +68,7 @@ public class Backend extends AbstractVerticle {
             JsonObject service = routingContext.getBodyAsJson();
             String name = service.getString("name");
             String url = service.getString("url");
-            String id = new Storage().createService(name, url);
+            String id = storage.createService(name, url);
             response.setStatusCode(201).end("CREATED " + id);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -82,7 +83,7 @@ public class Backend extends AbstractVerticle {
             JsonObject patch = routingContext.getBodyAsJson();
             String status = patch.getString("status");
             String timestamp = patch.getString("timestamp");
-            new Storage().setStatus(id, status, timestamp);
+            storage.setStatus(id, status, timestamp);
             response.setStatusCode(200).end("UPDATED " + id);
         } catch (ServiceNotFound e) {
             response.setStatusCode(404).end("NOT FOUND " + id);
@@ -96,7 +97,7 @@ public class Backend extends AbstractVerticle {
         HttpServerResponse response = routingContext.response();
         String id = routingContext.request().getParam("serviceId");
         try {
-            new Storage().deleteService(id);
+            storage.deleteService(id);
             response.setStatusCode(200).end("DELETED " + id);
         } catch (ServiceNotFound e) {
             response.setStatusCode(404).end("NOT FOUND " + id);

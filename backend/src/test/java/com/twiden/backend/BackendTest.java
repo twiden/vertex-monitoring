@@ -31,7 +31,9 @@ public class BackendTest {
     public void setUp(TestContext context) {
         vertx = Vertx.vertx();
         try {
-            new Storage().clearDatabase();
+            Storage storage = new Storage();
+            storage.clearDatabase();
+
         } catch (IOException e) {
             fail("Could not access database");
         }

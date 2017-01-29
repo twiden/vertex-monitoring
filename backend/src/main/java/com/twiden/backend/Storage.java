@@ -88,6 +88,7 @@ public class Storage {
         FileWriter file = new FileWriter(Storage.db);
         file.write(obj.toJSONString());
         file.flush();
+        file.close();
     }
 
     private void ensureDatabaseIsInitialized() throws IOException {
