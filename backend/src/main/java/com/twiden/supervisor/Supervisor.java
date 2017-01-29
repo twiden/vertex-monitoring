@@ -1,27 +1,27 @@
 package com.twiden.supervisor;
 
 import java.io.IOException;
-import org.apache.http.HttpHost;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.NoHttpResponseException;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.ByteArrayEntity;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.Date;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Supervisor {
 

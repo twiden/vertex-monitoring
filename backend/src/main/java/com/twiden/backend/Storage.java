@@ -1,16 +1,10 @@
 package com.twiden.backend;
 
-import com.twiden.backend.Service;
-import com.twiden.backend.ServiceNotFound;
-import com.twiden.backend.StorageIOException;
-
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import java.io.IOException;
 import java.io.FileReader;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.File;
 
@@ -25,6 +19,7 @@ public class Storage {
 
     static String db = "database.json";
     static String emptyDb = "{\"services\": []}";
+    private static final ServiceMarshaller service_marshaller = new ServiceMarshaller();
 
     Storage() throws StorageIOException {
         this.ensureDatabaseIsInitialized();
@@ -43,14 +38,7 @@ public class Storage {
             throw new StorageIOException("Database file does not contain valid json");
         }
 
-        ArrayList<Service> service_instances = new ArrayList<>();
-        Iterator<JSONObject> iterator = db_services.iterator();
-
-        while (iterator.hasNext()) {
-            service_instances.add(new Service(iterator.next()));
-        }
-
-        return service_instances;
+        return service_marshaller.servicesFromJSON(db_services);
     }
 
     public String createService(String name, String url) throws StorageIOException {
@@ -88,12 +76,8 @@ public class Storage {
     }
 
     private void writeServices(ArrayList<Service> services) throws StorageIOException {
-        JSONArray service_list = new JSONArray();
-        for (Service service : services) {
-            service_list.add(service.toJSONObject());
-        }
         JSONObject obj = new JSONObject();
-        obj.put("services", service_list);
+        obj.put("services", service_marshaller.servicesToJSON(services));
 
         try {
             FileWriter file = new FileWriter(Storage.db);
