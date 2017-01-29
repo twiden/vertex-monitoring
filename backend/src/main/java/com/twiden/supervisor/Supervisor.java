@@ -13,6 +13,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,20 +90,14 @@ public class Supervisor {
     private static HashMap<String, String> parseServices(String backend_response) {
         HashMap<String, String> services = new HashMap<>();
 
-        try {
-            JSONParser parser = new JSONParser();
-            Object obj = parser.parse(backend_response);
-            JSONObject jsonObject =  (JSONObject) obj;
+        JSONObject obj =  (JSONObject) new JSONTokener(backend_response).nextValue();
+        JSONArray remote_services = obj.getJSONArray("services");
 
-            for (Object s : (JSONArray) jsonObject.get("services")) {
-                JSONObject service = (JSONObject) s;
-                String id = (String) service.get("id");
-                String url = (String) service.get("url");
-                services.put(id, url);
-            }
-        } catch (ParseException e) {
-            System.out.println("Seems like the backend returned invalid json...");
-            return new HashMap<String, String>();
+        for (int i = 0; i < remote_services.length(); i++) {
+            JSONObject service = remote_services.getJSONObject(i);
+            String id = service.getString("id");
+            String url = service.getString("url");
+            services.put(id, url);
         }
         return services;
     }

@@ -16,10 +16,10 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 @RunWith(VertxUnitRunner.class)
 public class BackendTest {
@@ -50,7 +50,7 @@ public class BackendTest {
         vertx.createHttpClient().getNow(port, "localhost", "/service",
             response -> {
                 response.handler(body -> {
-                    context.assertEquals(parseServices(body.toString()).size(), 0);
+                    context.assertEquals(parseServices(body.toString()).length(), 0);
                     async.complete();
             });
         });
@@ -67,8 +67,8 @@ public class BackendTest {
             response -> {
                 response.handler(body -> {
                     JSONArray services = parseServices(body.toString());
-                    context.assertEquals(services.size(), 1);
-                    JSONObject s = (JSONObject) services.get(0);
+                    context.assertEquals(services.length(), 1);
+                    JSONObject s = services.getJSONObject(0);
 
                     context.assertEquals(s.get("id"), service_id);
                     context.assertEquals(s.get("name"), "Pizza Service");
@@ -93,10 +93,10 @@ public class BackendTest {
                 ArrayList<Service> services = listServices();
                 context.assertEquals(services.size(), 1);
                 Service service = services.get(0);
-                context.assertEquals((String) service.getName(), "Pizza Service");
-                context.assertEquals((String) service.getUrl(), "http://example.com/pizza");
-                context.assertEquals((String) service.getStatus(), "");
-                context.assertEquals((String) service.getLastCheck(), "");
+                context.assertEquals(service.getName(), "Pizza Service");
+                context.assertEquals(service.getUrl(), "http://example.com/pizza");
+                context.assertEquals(service.getStatus(), "");
+                context.assertEquals(service.getLastCheck(), "");
                 async.complete();
             })
             .write(json)
@@ -132,8 +132,8 @@ public class BackendTest {
             .handler(response -> {
                 context.assertEquals(response.statusCode(), 200);
                 Service service = listServices().get(0);
-                context.assertEquals((String) service.getStatus(), "OK");
-                context.assertEquals((String) service.getLastCheck(), "1914-06-28 13:37");
+                context.assertEquals(service.getStatus(), "OK");
+                context.assertEquals(service.getLastCheck(), "1914-06-28 13:37");
                 async.complete();
             })
             .write(json)
@@ -167,15 +167,7 @@ public class BackendTest {
     }
 
     private JSONArray parseServices(String body) {
-        try {
-            JSONParser parser = new JSONParser();
-            Object obj = parser.parse(body);
-            JSONObject jsonObject =  (JSONObject) obj;
-            return (JSONArray) jsonObject.get("services");
-        } catch (ParseException e) {
-            fail(e.toString());
-        }
-
-        return new JSONArray();
+        JSONObject jsonObject =  (JSONObject) new JSONTokener(body).nextValue();
+        return jsonObject.getJSONArray("services");
     }
 }
