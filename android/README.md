@@ -6,6 +6,8 @@ I've never written an android app before so it is on a learners level of quality
 
 Features
 
+* Connect to Vertx backend by IP and port
+
 * Update button: Updates the list (it does not auto refresh)
 
 * List of services with name, status, time of last check and a delete button.
