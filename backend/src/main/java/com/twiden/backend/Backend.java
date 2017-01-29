@@ -58,7 +58,7 @@ public class Backend extends AbstractVerticle {
                 .end(Json.encodePrettily(obj));
         } catch (Throwable e) {
             e.printStackTrace();
-            response.setStatusCode(500).end("500 " + e.toString());
+            response.setStatusCode(500).end("500 " + e.toString()); // Do not return exception in production code
         }
     }
 
@@ -72,7 +72,7 @@ public class Backend extends AbstractVerticle {
             response.setStatusCode(201).end("CREATED " + id);
         } catch (Throwable e) {
             e.printStackTrace();
-            response.setStatusCode(500).end("500 " + e.toString());
+            response.setStatusCode(500).end("500 " + e.toString()); // Do not return exception in production code
         }
     }
 
@@ -89,7 +89,7 @@ public class Backend extends AbstractVerticle {
             response.setStatusCode(404).end("NOT FOUND " + id);
         } catch (Throwable e) {
             e.printStackTrace();
-            response.setStatusCode(500).end("500 " + e.toString());
+            response.setStatusCode(500).end("500 " + e.toString()); // Do not return exception in production code
         }
     }
 
@@ -103,7 +103,7 @@ public class Backend extends AbstractVerticle {
             response.setStatusCode(404).end("NOT FOUND " + id);
         } catch (Throwable e) {
             e.printStackTrace();
-            response.setStatusCode(500).end("500 " + e.toString());
+            response.setStatusCode(500).end("500 " + e.toString()); // Do not return exception in production code
         }
     }
 }
