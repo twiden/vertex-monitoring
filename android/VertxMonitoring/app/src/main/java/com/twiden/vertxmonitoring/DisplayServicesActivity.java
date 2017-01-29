@@ -54,7 +54,7 @@ public class DisplayServicesActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                System.out.println("!!!!! DELTE SERVICE ERROR"); // TODO error handling here
+                System.out.println("There was a nasty problem deleting a service"); // TODO error handling here
             }
         });
 
@@ -90,14 +90,14 @@ public class DisplayServicesActivity extends AppCompatActivity {
                             layout.addView(view);
                         }
                     } catch (JSONException e) {
-                        System.out.println("!!!!! REFRESH SERVICE ERROR 1"); // TODO error handling here
+                        System.out.println("There was a nasty problem parsing services"); // TODO error handling here
                     }
                 }
             }, new Response.ErrorListener() {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println("!!!!! REFRESH SERVICE ERROR 2"); // TODO error handling here
+                    System.out.println("There was a nasty problem updating services"); // TODO error handling here
 
                 }
             });
@@ -124,7 +124,7 @@ public class DisplayServicesActivity extends AppCompatActivity {
             {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println("!!!!! ADD SERVICE ERROR 2"); // TODO error handling here
+                    System.out.println("There was a nasty problem adding a service"); // TODO error handling here
                 }
             }
         ) {
