@@ -2,6 +2,7 @@ package com.twiden.backend;
 
 import com.twiden.backend.Service;
 import com.twiden.backend.ServiceNotFound;
+import com.twiden.backend.StorageIOException;
 
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 import java.io.IOException;
 import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.File;
 
@@ -18,21 +20,29 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 // Racy storage. Concurrent requests might break this.
-// Throws all sorts of exceptions because if storage breaks there is no point trying to keep the application alive, hard failures are better here.
+// Linear seeking in json file is not very efficient but ok for this implementation.
 public class Storage {
 
     static String db = "database.json";
     static String emptyDb = "{\"services\": []}";
 
-    Storage() throws IOException{
+    Storage() throws StorageIOException {
         this.ensureDatabaseIsInitialized();
     }
 
-    public ArrayList<Service> listServices() throws IOException, ParseException {
+    public ArrayList<Service> listServices() throws StorageIOException {
         JSONParser parser = new JSONParser();
-        Object obj = parser.parse(new FileReader(Storage.db));
-        JSONObject jsonObject =  (JSONObject) obj;
-        JSONArray db_services = (JSONArray) jsonObject.get("services");
+        JSONArray db_services;
+
+        try {
+            JSONObject jsonObject =  (JSONObject) parser.parse(new FileReader(Storage.db));
+            db_services = (JSONArray) jsonObject.get("services");
+        } catch (IOException e) {
+            throw new StorageIOException("Database file does not exist or could not be created");
+        } catch (ParseException e) {
+            throw new StorageIOException("Database file does not contain valid json");
+        }
+
         ArrayList<Service> service_instances = new ArrayList<>();
         Iterator<JSONObject> iterator = db_services.iterator();
 
@@ -43,7 +53,7 @@ public class Storage {
         return service_instances;
     }
 
-    public String createService(String name, String url) throws IOException, ParseException {
+    public String createService(String name, String url) throws StorageIOException {
         String id = UUID.randomUUID().toString();
         ArrayList<Service> services = listServices();
         services.add(new Service(id, name, "", url, ""));
@@ -51,7 +61,7 @@ public class Storage {
         return id;
     }
 
-    public void deleteService(String id) throws IOException, ParseException, ServiceNotFound {
+    public void deleteService(String id) throws StorageIOException, ServiceNotFound {
         ArrayList<Service> services = listServices();
         for (int i = 0; i < services.size(); i++) {
             if (services.get(i).getId().equals(id)) {
@@ -63,7 +73,7 @@ public class Storage {
         throw new ServiceNotFound(id);
     }
 
-    public void setStatus(String id, String status, String timestamp) throws IOException, ParseException, ServiceNotFound {
+    public void setStatus(String id, String status, String timestamp) throws ServiceNotFound, StorageIOException {
         ArrayList<Service> services = listServices();
         for (int i = 0; i < services.size(); i++) {
             Service s = services.get(i);
@@ -77,7 +87,7 @@ public class Storage {
         throw new ServiceNotFound(id);
     }
 
-    private void writeServices(ArrayList<Service> services) throws IOException {
+    private void writeServices(ArrayList<Service> services) throws StorageIOException {
         JSONArray service_list = new JSONArray();
         for (Service service : services) {
             service_list.add(service.toJSONObject());
@@ -85,13 +95,18 @@ public class Storage {
         JSONObject obj = new JSONObject();
         obj.put("services", service_list);
 
-        FileWriter file = new FileWriter(Storage.db);
-        file.write(obj.toJSONString());
-        file.flush();
-        file.close();
+        try {
+            FileWriter file = new FileWriter(Storage.db);
+            file.write(obj.toJSONString());
+            file.flush();
+            file.close();
+        }
+        catch (IOException e) {
+            throw new StorageIOException("Could not write services to database: " + e.toString());
+        }
     }
 
-    private void ensureDatabaseIsInitialized() throws IOException {
+    private void ensureDatabaseIsInitialized() throws StorageIOException {
         boolean db_exists = true;
         try {
             new FileReader(Storage.db);
@@ -99,13 +114,18 @@ public class Storage {
             db_exists = false;
         }
         if (!db_exists) {
-            FileWriter oFile = new FileWriter(Storage.db, false);
-            oFile.write(Storage.emptyDb);
-            oFile.close();
+            try {
+                FileWriter oFile = new FileWriter(Storage.db, false);
+                oFile.write(Storage.emptyDb);
+                oFile.close();
+            }
+            catch (IOException e) {
+                throw new StorageIOException("Could not ensure database exists: " + e.toString());
+            }
         }
     }
 
-    public void clearDatabase() throws IOException {
+    public void clearDatabase() {
         new File(Storage.db).delete();
     }
 }

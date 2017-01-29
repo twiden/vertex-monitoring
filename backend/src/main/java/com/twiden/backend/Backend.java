@@ -3,6 +3,7 @@ package com.twiden.backend;
 import com.twiden.backend.Storage;
 import com.twiden.backend.Service;
 import com.twiden.backend.ServiceNotFound;
+import com.twiden.backend.StorageIOException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +39,8 @@ public class Backend extends AbstractVerticle {
 
         try {
             storage = new Storage();
-        } catch (IOException e) {
-            System.out.println("Could not access database");
+        } catch (StorageIOException e) {
+            e.printStackTrace();
             return;
         }
 
@@ -58,7 +59,7 @@ public class Backend extends AbstractVerticle {
                 .end(Json.encodePrettily(obj));
         } catch (Throwable e) {
             e.printStackTrace();
-            response.setStatusCode(500).end("500 " + e.toString()); // Do not return exception in production code
+            response.setStatusCode(500).end("ERROR");
         }
     }
 
@@ -72,7 +73,7 @@ public class Backend extends AbstractVerticle {
             response.setStatusCode(201).end("CREATED " + id);
         } catch (Throwable e) {
             e.printStackTrace();
-            response.setStatusCode(500).end("500 " + e.toString()); // Do not return exception in production code
+            response.setStatusCode(500).end("ERROR");
         }
     }
 
@@ -89,7 +90,7 @@ public class Backend extends AbstractVerticle {
             response.setStatusCode(404).end("NOT FOUND " + id);
         } catch (Throwable e) {
             e.printStackTrace();
-            response.setStatusCode(500).end("500 " + e.toString()); // Do not return exception in production code
+            response.setStatusCode(500).end("ERROR");
         }
     }
 
@@ -103,7 +104,7 @@ public class Backend extends AbstractVerticle {
             response.setStatusCode(404).end("NOT FOUND " + id);
         } catch (Throwable e) {
             e.printStackTrace();
-            response.setStatusCode(500).end("500 " + e.toString()); // Do not return exception in production code
+            response.setStatusCode(500).end("ERROR");
         }
     }
 }

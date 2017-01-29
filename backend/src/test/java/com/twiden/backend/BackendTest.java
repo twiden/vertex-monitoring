@@ -33,9 +33,8 @@ public class BackendTest {
         try {
             Storage storage = new Storage();
             storage.clearDatabase();
-
-        } catch (IOException e) {
-            fail("Could not access database");
+        } catch (StorageIOException e) {
+            fail(e.toString());
         }
         vertx.deployVerticle(Backend.class.getName(), context.asyncAssertSuccess());
     }
@@ -59,10 +58,11 @@ public class BackendTest {
 
     @Test
     public void testListingOneServiceWithStatus(TestContext context) {
+        final Async async = context.async();
+
         createService("Pizza Service", "http://example.com/pizza");
         String service_id = listServices().get(0).getId();
         setStatus(service_id, "OK", "1914-06-28 13:37");
-        final Async async = context.async();
         vertx.createHttpClient().getNow(port, "localhost", "/service",
             response -> {
                 response.handler(body -> {
@@ -107,10 +107,10 @@ public class BackendTest {
     public void testDeletingOneService(TestContext context) {
         final String json = "{\"name\": \"Pizza Service\", \"url\": \"http://example.com/pizza\"}";
         final String length = Integer.toString(json.length());
+        final Async async = context.async();
+
         createService("Pizza Service", "http://example.com/pizza");
         String service_id = listServices().get(0).getId();
-
-        final Async async = context.async();
         vertx.createHttpClient().delete(port, "localhost", "/service/" + service_id)
             .handler(response -> {
                 context.assertEquals(listServices().size(), 0);
@@ -122,9 +122,10 @@ public class BackendTest {
     @Test
     public void testSettingServiceStatus(TestContext context) {
         final String json = "{\"status\": \"OK\", \"timestamp\": \"1914-06-28 13:37\"}";
+        final Async async = context.async();
+
         createService("Pizza Service", "http://example.com/pizza");
         String service_id = listServices().get(0).getId();
-        final Async async = context.async();
         vertx.createHttpClient().request(HttpMethod.PATCH, port, "localhost", "/service/" + service_id)
             .putHeader("content-type", "application/json")
             .putHeader("content-length", Integer.toString(json.length()))
@@ -142,24 +143,24 @@ public class BackendTest {
     private void createService(String name, String url) {
         try {
             new Storage().createService(name, url);
-        } catch (Throwable e) {
-            fail("Could not access database");
+        } catch (StorageIOException e) {
+            fail(e.toString());
         }
     }
 
     private void setStatus(String id, String status, String timestamp) {
         try {
             new Storage().setStatus(id, status, timestamp);
-        } catch (Throwable e) {
-            fail("Could not access database");
+        } catch (ServiceNotFound|StorageIOException e) {
+            fail(e.toString());
         }
     }
 
     private ArrayList<Service> listServices() {
         try {
             return new Storage().listServices();
-        } catch (Throwable e) {
-            fail("Could not access database");
+        } catch (StorageIOException e) {
+            fail(e.toString());
         }
 
         return new ArrayList<Service>();
@@ -171,8 +172,8 @@ public class BackendTest {
             Object obj = parser.parse(body);
             JSONObject jsonObject =  (JSONObject) obj;
             return (JSONArray) jsonObject.get("services");
-        } catch (Throwable e) {
-            fail("Could not parse json");
+        } catch (ParseException e) {
+            fail(e.toString());
         }
 
         return new JSONArray();
