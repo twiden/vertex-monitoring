@@ -1,5 +1,8 @@
 package com.twiden.backend;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class Service {
 
     private final String id;
@@ -44,4 +47,37 @@ public class Service {
         this.lastCheck = lastCheck;
     }
 
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+            append(id).
+            append(name).
+            append(status).
+            append(url).
+            append(lastCheck).
+            toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (!(o instanceof Service)) {
+            return false;
+        }
+        if (o == this) {
+            return true;
+        }
+
+        Service that = (Service) o;
+
+        return new EqualsBuilder().
+            append(this.id, that.getId()).
+            append(this.name, that.getName()).
+            append(this.status, that.getStatus()).
+            append(this.url, that.getUrl()).
+            append(this.lastCheck, that.getLastCheck()).
+            isEquals();
+    }
 }
