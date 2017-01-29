@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 
 import org.json.JSONArray;
 import org.json.JSONTokener;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 // Racy storage. Concurrent requests might break this.

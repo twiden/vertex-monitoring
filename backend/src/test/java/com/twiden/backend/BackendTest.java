@@ -1,8 +1,5 @@
 package com.twiden.backend;
 
-import com.twiden.backend.Storage;
-import com.twiden.backend.Service;
-import java.io.IOException;
 import java.util.ArrayList;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -17,7 +14,6 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
