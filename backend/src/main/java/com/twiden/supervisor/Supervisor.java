@@ -59,11 +59,11 @@ public class Supervisor {
 
     private static void healthCheck(String backend_url) {
         HashMap<String, String> services = loadServices(backend_url);
-        Iterator it = services.entrySet().iterator();
+        Iterator<Map.Entry<String, String>> it = services.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry)it.next();
-            String id = (String) entry.getKey();
-            String url = (String) entry.getValue();
+            Map.Entry<String, String> entry = it.next();
+            String id = entry.getKey();
+            String url = entry.getValue();
             boolean ok = checkServiceStatus(id, url);
             updateServiceStatus(id, backend_url, ok);
         }
