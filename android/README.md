@@ -1,6 +1,6 @@
 # Monitoring with Vertx.io
 
-This is an Android Studio project. It is easiest to open and run it from Android Studio.
+The app folder is an Android Studio project. It is easiest to open and run it from Android Studio.
 
 I've never written an android app before so it is on a learners level of quality. But it is a working frontend.
 
